@@ -1,0 +1,74 @@
+version: 2
+
+sources:
+  - name: dbt
+    tables:
+      - name: routes
+      - name: stop_times
+      - name: stops
+      - name: transfers
+      - name: trips
+
+models:
+  - name: dim_trips
+    description: "contains trips information"
+    columns:
+      - name: trip_code
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: string
+      - name: trip_date
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: date
+      - name: route_id
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: string
+      - name: direction_id
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: int
+      - name: stop_id
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: string
+      - name: stop_sequence
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: int
+      - name: arrival_time
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: string
+      - name: departure_time
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: string
+
+  - name: dim_calendar
+    description: "calendar table for 2022"
+
+  - name: dim_route
+    description: "contains route information"
+    columns:
+      - name: route_id
+        description: "The primary key for this table"
+        data_tests:
+        - unique
+        - not_null
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: string
+      - name: route_short_name
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: string
+      - name: route_long_name
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: string
+      - name: route_desc
+        tests:
+        - dbt_expectations.expect_column_values_to_be_of_type:
+            column_type: string
+

@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: fait_stops_routes_desc_order
+    description: "Routes with number of stops in descending order"
+  - name: most_popular_routes_2022
+    description: "Top 10 most popular routes in August 2022"
+  
