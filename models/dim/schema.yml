@@ -1,5 +1,4 @@
 version: 2
-
 models:
   - name: dim_trips
     description: "contains trips information"
@@ -64,3 +63,46 @@ models:
             column_type: int
   - name: fait_info_routes
 
+unit_tests:
+  - name: 'trip_id_splits_into_trip_code_and_date_full_refresh_mode'
+    model: dim_trips
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: ref('stg_trips')
+        rows:
+          - {trip_id: OCESN5983F3161409:2024-05-28T00:25:34Z}
+      - input: ref('stg_stop_times')
+        rows:
+          - {}
+    expect:
+      rows:
+      - {trip_code: OCESN5983F3161409, trip_date: 2024-05-28}
+
+  - name: 'trip_id_splits_into_trip_code_and_date_incremental_mode'
+    model: dim_trips
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: ref('dim_trips')
+        rows:
+          - {}
+      - input: ref('stg_stop_times')
+        rows:
+          - {}
+      - input: ref('stg_trips')
+        rows:
+          - {trip_id: OCESN5983F3161409:2024-05-28T00:25:34Z}
+          - {trip_id: OCESN5983F3161410:2024-05-29T00:28:34Z}
+          - {trip_id: OCESN5983F3161410:2024-05-30T00:29:34Z}
+          - {trip_id: OCESN5983F3161410:2024-05-30T00:30:34Z}
+      - input: this
+        rows:
+          - {trip_code:  OCESN5983F3161409, trip_date: 2024-05-28}
+    expect:
+      rows:
+        - {trip_code: OCESN5983F3161410, trip_date: 2024-05-29}
+        - {trip_code: OCESN5983F3161410, trip_date: 2024-05-30}
+        - {trip_code: OCESN5983F3161410, trip_date: 2024-05-30}
