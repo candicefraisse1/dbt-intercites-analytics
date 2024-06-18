@@ -1,14 +1,5 @@
 version: 2
 
-sources:
-  - name: dbt
-    tables:
-      - name: routes
-      - name: stop_times
-      - name: stops
-      - name: transfers
-      - name: trips
-
 models:
   - name: dim_trips
     description: "contains trips information"
